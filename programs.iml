@@ -1,9 +1,636 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<module type="JAVA_MODULE" version="4">
-  <component name="NewModuleRootManager" inherit-compiler-output="true">
-    <exclude-output />
-    <content url="file://$MODULE_DIR$" />
-    <orderEntry type="inheritedJdk" />
-    <orderEntry type="sourceFolder" forTests="false" />
-  </component>
-</module>
+2)maven project  
+ <build>
+    <plugins>
+      <!-- Compiler Plugin -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.1</version>
+        <configuration>
+          <source>1.8</source>
+          <target>1.8</target>
+
+        </configuration>
+      </plugin>
+
+      <!-- Jar Plugin -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>3.2.0</version>
+        <configuration>
+          <archive>
+            <manifest>
+              <mainClass>org.example.App</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+mvn clean
+mvn package
+java -jar .\target\filename-1.0-SNAPSHOT.jar 
+-----------------------------------------------------------------------------
+3)gradel-kotlin
+
+buld.gradle.kts
+
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+plugins {
+    kotlin("jvm") version "1.8.10"  // Use latest stable Kotlin version
+    application
+}
+group = "org.example"
+version = "1.0-SNAPSHOT"
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation(kotlin("stdlib"))  // Kotlin Standard Library
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
+
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
+}
+
+tasks.test {
+    useJUnitPlatform()
+}
+
+tasks.withType<KotlinCompile> {
+    kotlinOptions.jvmTarget = "17"  // Match with your JDK version
+}
+tasks.register<Jar>("fatJar") {
+    archiveClassifier.set("all")
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    manifest {
+        attributes["Main-Class"] = "MainKt"
+    }
+    from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
+    with(tasks.jar.get() as CopySpec)
+}
+tasks.register("hello") {
+    doLast {
+        println("Hello, Usha!")
+    }
+}
+
+    application {
+    mainClass.set("MainKt")  // Update this if using a package
+}
+
+Main.kt
+fun main() {
+    println("Hello, Gradle with Kotlin DSL")
+
+}
+
+Execute these commands in terminal
+
+./gradlew build
+./gradlew run  
+./gradlew fatJar     
+java -jar .\build\libs\GradleKotlin-1.0-SNAPSHOT.jar
+./gradlew hello    
+
+   ------------------------------------------------------------------------------------
+3) gradel-grovvy
+
+==build.gradel
+plugins {
+    id 'groovy'
+    id 'application'
+}
+
+group = 'org.example'
+version = '1.0'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.codehaus.groovy:groovy-all:3.0.9'
+
+    testImplementation 'junit:junit:4.13.2'
+}
+
+application {
+    mainClass = 'org.example.App'
+}
+
+// A custom task example
+task hello {
+    doLast {
+        println 'Hello, Gradle!'
+    }
+}
+
+==main.grovvy
+package org.example
+class App {
+    static void main(String[] args) {
+        println 'Hello from Groovy App!'
+    }
+}
+----------------------------------------------------
+ ./gradlew build
+./gradlew run 
+=------------------------------------------------------------------
+4) migrate maven to gradle
+====pom.xml
+==dependinsis
+<build>
+    <plugins>
+      <!-- Compiler Plugin -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.1</version>
+        <configuration>
+          <source>1.8</source>
+          <target>1.8</target>
+
+        </configuration>
+      </plugin>
+
+      <!-- Jar Plugin -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>3.2.0</version>
+        <configuration>
+          <archive>
+            <manifest>
+              <mainClass>org.example.App</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+    </plugins> 
+ </build>
+
+----comand-----
+mvn clean package
+java -jar .\target\filename-1.0-SNAPSHOT.jar
+gradle init 
+---------------------------------------------------------------
+===build.gradel.kts
+plugins {
+    java
+}
+
+group = "org.example"
+version = "1.0-SNAPSHOT"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation("junit:junit:4.13.2")
+}
+
+tasks.jar {
+    manifest {
+        attributes["Main-Class"] = "org.example.App"
+    }
+}
+
+
+=======App.java
+package org.example;
+public class App {
+    public static void main(String[] args) {
+        System.out.println("Hello from Gradle!");
+    }
+}
+----commands----
+gradle clean build
+java -jar .\build\libs\filename-1.0-SNAPSHOT.jar
+
+---------------------------------------------------------------------------------------------------------
+6)
+====pomfile
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.example</groupId>
+  <artifactId>seleniuminmaven</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>seleniuminmaven</name>
+  <url>http://maven.apache.org</url>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-java</artifactId>
+      <version>4.29.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.testng</groupId>
+      <artifactId>testng</artifactId>
+      <version>7.11.0</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>3.2.0</version>
+        <executions>
+          <execution>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.basedir}/docs</outputDirectory>
+              <!-- Deploy to /docs folder -->
+              <resources>
+                <resource>
+                  <directory>src/main/resources</directory>
+                  <includes>
+                    <include>/*</include> <!-- Copy all files in src/main/resources -->
+                  </includes>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
+----------------------------------------------------------------------------------------------------------------
+====index.html
+serif;
+    margin: 0;background-color: #f4f4f9;
+ 
+    padding: 0;
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Computer Science and Engineering(Data Science)</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+</head>
+<body>
+
+<!-- Header Section -->
+<header>
+    <div class="container">
+        <h1>Vishveshwaraya Technological University</h1>
+        <img src="logo.png" alt="VTU Logo" title="VTU">
+        <nav>
+            <a href="#Courses">Courses</a>
+            <a href="#address">Address</a>
+
+        </nav>
+    </div>
+</header>
+
+<!-- Content Section -->
+<div class="content">
+    <!-- Services Section -->
+    <section id="Courses">
+        <h2>Courses</h2>
+        <p>
+            Bachelor of Engineering,Computer Applications and IT,Sciences,  Management and Business Administration,    Animation and Design.....
+        </p>
+        <div class="Courses">
+            <div class="Courses">
+                <h3>UG</h3>
+                <p>
+                    Bachelor of Engineering.
+                </p>
+            </div>
+            <div class="Courses">
+                <h3>PG</h3>
+                <p>
+                    Post Graduate.
+                </p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Address Section -->
+    <section id="address">
+        <h2>Address Info</h2>
+        <p>
+            QFH7+497 Jnana Sangama, VTU Main Rd, Visvesvaraya Technological University,
+            Machhe, Belagavi, Karnataka 590018<br>
+            <strong>Telephone:</strong> 0831 249 8100<br>
+            <strong>Email:</strong> <a href="registrar@vtu.ac.in">registrar@vtu.ac.in.</a>
+        </p>
+    </section>
+</div>
+--------------------------------------------------------------------------------------------------------------------
+===styles.css
+
+/* General Styles */
+body {
+    font-family: Arial, sans-   color: #333;
+}
+
+/* Header Styles */
+header {
+    background-color: #004c99;
+    color: white;
+    padding: 20px 0;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+header .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+}
+header h1 {
+    margin: 10px 0;
+    font-size: 2.5rem;
+}
+header img {
+    max-width: 250px;
+    margin: 10px 0;
+    border-radius: 05px;
+}
+header nav {
+    margin-top: 15px;
+}
+header nav a {
+    color: white;
+    margin: 0 15px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1rem;
+}
+header nav a:hover {
+    text-decoration: underline;
+}
+
+/* Content Section */
+.content {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.content section {
+    margin-bottom: 30px;
+}
+.content section h2 {
+    color: #004c99;
+    border-bottom: 3px solid #004c99;
+    display: inline-block;
+    padding-bottom: 5px;
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+}
+.content section p {
+    line-height: 1.6;
+    font-size: 1rem;
+    text-align: justify;
+}
+
+/* Services Section */
+.services {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+.service {
+    flex: 1 1 calc(33.333% - 20px);
+    background-color: #eaf3ff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.service h3 {
+    color: #004c99;
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+}
+.service p {
+    font-size: 0.95rem;
+}
+
+/* Address Section */
+#address a {
+    color: #004c99;
+    text-decoration: none;
+    font-weight: bold;
+}
+#address a:hover {
+    text-decoration: underline;
+}
+
+/* Footer Styles */
+footer {
+    background-color: #004c99;
+    color: white;
+    text-align: center;
+    padding: 15px 0;
+    font-size: 0.9rem;
+}
+footer a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
+footer a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .services {
+        flex-direction: column;
+    }
+    .service {
+        flex: 1 1 100%;
+    }
+    header nav a {
+        display: block;
+        margin: 5px 0;
+    }
+}
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+===apptest.java
+package org.example;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.Assert;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
+import static org.testng.Assert.assertTrue;
+
+public class AppTest {
+    private static WebDriver driver;
+
+    @BeforeTest
+    public void openBrowser() throws InterruptedException {
+        driver = new ChromeDriver();
+        driver.manage().window().maximize();
+        Thread.sleep(2000);
+        driver.get("https://trisam3118.github.io/demowebsite/");// here enter static website URL from your GITHUB
+    }
+
+    @Test
+    public void titleValidationTest(){
+        String actualTitle = driver.getTitle();
+        String expectedTitle = "Computer Science and Engineering(Data Science)";
+        Assert.assertEquals(actualTitle, expectedTitle);
+        assertTrue(true, "Title should contain 'Computer Science and Engineering(Data Science)'");
+    }
+
+    @AfterTest
+    public void closeBrowser() throws InterruptedException {
+        Thread.sleep(1000);
+        driver.quit();
+    }
+
+}
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+mvn clean
+mvn install package
+6th
+java -jar jenkins.war
+-----------------------------------------------------------------------------------------------------------
+prog 77
+Base File
+
+[base]
+name=CentOS-7 - Base
+baseurl=http://vault.centos.org/7.9.2009/os/x86_64/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+
+[updates]
+name=CentOS-7 - Updates
+baseurl=http://vault.centos.org/7.9.2009/updates/x86_64/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+
+[extras]
+name=CentOS-7 - Extras
+baseurl=http://vault.centos.org/7.9.2009/extras/x86_64/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+
+
+
+Playbook.yml File
+
+- name: Configure Web Server
+  hosts: webservers
+  become: true
+  tasks:
+    - name: Install Apache
+      yum:
+        name: httpd
+        state: latest
+
+    - name: Start and enable Apache
+      service:
+        name: httpd
+        state: started
+        enabled: true
+
+    - name: Create a custom index.html
+      copy:
+        dest: /var/www/html/index.html
+        content: "<h1>Hello from Ansible Web Server!</h1>"
+
+- name: Configure DB Server
+  hosts: dbservers
+  become: true
+  tasks:
+    - name: Install Apache
+      yum:
+        name: httpd
+        state: latest
+
+    - name: Start and enable Apache
+      service:
+        name: httpd
+        state: started
+        enabled: true
+
+
+
+RSA File
+
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCkSf+fUhWHvIYB+NA74AJTKy0g2tM4WKKxvCh9CMLPd9LzwDXOHrFQZ7R0tWKljjmOuhlhWz5b/TAMLdxAzVatvDuoOm75IvdcmwEFmG23cqFwa8Pp86z6c5bp9pM2k3HNfPZiU/SO4aAgnlQa+/KqXXC7YA1GEyPHPvpZGDEyeglFkPxrgogrSFX85QEjGFtWYThOeu8HaaJJMrVEbOAzVocBEfveTXVaCPlHiFlh1FJWZUGxGnx/qx/3F93xAIkOPGSdggxNulHOHCDudv4XKHphjaVBFOXvElQWD08E1CP9oOZa3wiV2ejgpIkvWdpSophFbaUow5aSaYM73DgF vagrant@controller
+
+
+
+Web db file
+
+# Configuration for the "web" VM
+    config.vm.define "web" do |web|
+      web.vm.box="centos/7"
+      web.vm.hostname = "web"
+      web.vm.network "private_network", ip: "192.168.33.10"
+      web.vm.network "forwarded_port", guest: 80, host: 8081  # Explicitly specify 8081
+    end
+  
+    # Configuration for the "db" VM
+    config.vm.define "db" do |db|
+      db.vm.box="centos/7"
+      db.vm.hostname = "db"
+      db.vm.network "private_network", ip: "192.168.33.11"
+      db.vm.network "forwarded_port", guest: 80, host: 8082  # Explicitly specify 8082
+    end
+  
+end
+
+
+
+
+Ansible steps:
+
+ vagrantfile->ansible-controller->terminal
+1.vagrant init centos/7
+2. vagrant provision
+3.vagrant ssh
+4.ls
+5. cd ansible-project
+6.ls
+7.vi playbook.yml
+8.exit
+9.cd ansible-hosts
+10. vagrant init centos/7
+11.vagrant provision
+12.vagrant status
+13.vagrant ssh
+14.vagrant ssh web
+15.exit
+16.vagrant ssh db
+17.exit
+18.vagrant status
+19. cd ..
+20.vagrant ssh
+21. cd ansible-project
+22.ansible all -m ping -i hosts
+23.ansible-playbook -i hosts playbook.yml
