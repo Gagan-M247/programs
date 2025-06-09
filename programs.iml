@@ -635,6 +635,18 @@ Ansible steps:
 22.ansible all -m ping -i hosts
 23.ansible-playbook -i hosts playbook.yml
 ----------------------------------------------------------------------------------------
+ Manual Setup Process
+ Created a Simple Java Project in IntelliJ IDEA (Selenium Automation Test).
+ Manually Downloaded the Selenium JAR from:
+ https://www.selenium.dev
+ Created a lib folder and placed 
+selenium-server-4.28.1.jar inside it.
+ Manually Added the Dependency in IntelliJ IDEA:
+ File → Project Structure → Libraries → Add Selenium JAR → Apply → OK
+ Wrote a Selenium Test in Java (
+ LoginTest.java ) to validate login at https://www.saucedemo.com.
+ Ran the test manually in IntelliJ IDEA
+
 import org.openqa.selenium.By;
  import org.openqa.selenium.WebDriver;
  import org.openqa.selenium.chrome.ChromeDriver;
